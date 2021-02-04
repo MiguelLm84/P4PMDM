@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ContenedorFragmentsInfo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fondopantallablanco3d_4">
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:ignore="NotSibling">
+
+                <ImageView
+                    android:id="@+id/imageViewPlanta"
+                    android:layout_width="match_parent"
+                    android:layout_height="243dp"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/todo"
+                    android:scaleType="centerCrop"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tv_nombre_autor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="#020202"
+                    android:fontFamily="@font/russo_one"
+                    android:scrollbarStyle="outsideInset"
+                    android:text="@string/tv_nombre_autor"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:textColor="#FFFFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_titulo_json"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:fontFamily="@font/cantora_one"
+                    android:inputType="text"
+                    android:text="@string/titulo_json"
+                    android:textAlignment="center"
+                    android:textColor="#020202"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:ignore="RtlCompat,TextViewEdits" />
+
+                <TextView
+                    android:id="@+id/tv_cuerpo_json"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:inputType="textMultiLine|text"
+                    android:lines="20"
+                    android:maxLines="20"
+                    android:singleLine="false"
+                    android:textColor="#020202"
+                    android:textSize="14sp"
+                    tools:ignore="TextViewEdits" />
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
