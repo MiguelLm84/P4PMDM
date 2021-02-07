@@ -1,15 +1,12 @@
 package com.miguel_lm.appjsondata.ui;
 
-import com.miguel_lm.appjsondata.modelo.Posts;
+import com.miguel_lm.appjsondata.modelo.Post;
 
 public interface ListenerPost {
 
-    void infoAutor(Posts post);
+    void seleccionarPost(Post post);
 
-    void anhadirPosts(Posts post);
+    void modificarPosts(Post post);
 
-    void modificarPosts(Posts post);
-
-    void eliminarPosts(Posts post);
-    //void jsonDataSeleccionado(JsonData jsonData);
+    void eliminarPosts(Post post);
 }

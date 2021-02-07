@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = "Users")
-public class Users implements Serializable {
+@Entity(tableName = "User")
+public class User implements Serializable {
 
     @PrimaryKey
     @NonNull
@@ -34,7 +34,7 @@ public class Users implements Serializable {
         return id;
     }
 
-    public Users(String id, String name, String nickname, String email, String phone, String company) {
+    public User(String id, String name, String nickname, String email, String phone, String company) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;

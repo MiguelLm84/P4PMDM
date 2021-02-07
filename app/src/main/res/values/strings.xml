@@ -47,4 +47,6 @@
     <string name="json_app_toolbar">Json App</string>
     <string name="buscar">Buscar</string>
     <string name="json_operations_app">Json Operations App</string>
+    <string name="bt_cancelar">Cancelar</string>
+    <string name="reset">Reset</string>
 </resources>

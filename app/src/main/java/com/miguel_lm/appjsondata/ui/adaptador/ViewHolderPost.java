@@ -14,18 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
-import com.miguel_lm.appjsondata.modelo.Posts;
-import com.miguel_lm.appjsondata.modelo.Users;
+import com.miguel_lm.appjsondata.modelo.Post;
+import com.miguel_lm.appjsondata.modelo.User;
 import com.miguel_lm.appjsondata.ui.Activity_Info_Detalle;
 import com.miguel_lm.appjsondata.ui.Activity_Info_Post;
 import com.miguel_lm.appjsondata.ui.ListenerPost;
 
 public class ViewHolderPost extends RecyclerView.ViewHolder {
 
-    private TextView tv_titulo, tv_autor;
-    private ConstraintLayout constraintLayoutJson;
-    private CardView cardViewJson;
-    private ListenerPost listener_post;
+    TextView tv_titulo, tv_autor;
+    ConstraintLayout constraintLayoutJson;
+    CardView cardViewJson;
+    ListenerPost listener_post;
 
     public ViewHolderPost(@NonNull View itemView, ListenerPost listenerPost) {
         super(itemView);
@@ -38,14 +38,15 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
         cardViewJson = itemView.findViewById(R.id.CardViewJson);
     }
 
-    //public void mostrarTexto(final Users user, final Posts post, Context context) {
-    public void mostrarTexto(final Posts post, Context context) {
+    public void mostrarTexto(final Post post, Context context) {
 
         JsonLab jsonLab = JsonLab.get(context);
-        Users autor = jsonLab.searchUserById(post.getUserId());
+        User autor = jsonLab.searchUserById(post.getUserId());
 
         tv_titulo.setText(post.getTitulo());
         tv_autor.setText(autor.getName());
+
+        listener_post.seleccionarPost(post);
 
         cardViewJson.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +71,6 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
                             case R.id.accionVerInfoAutor:
                                 Intent intent = new Intent(context, Activity_Info_Detalle.class);
                                 context.startActivity(intent);
-
                                 break;
                             case R.id.accionModificarPost:
                                 listener_post.modificarPosts(post);

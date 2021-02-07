@@ -10,15 +10,17 @@ import java.io.Serializable;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "Posts")
-public class Posts implements Serializable {
+@Entity(tableName = "Post")
+public class Post implements Serializable {
 
-    @ForeignKey(entity = Users.class, parentColumns = "id", childColumns = "userId", onDelete = CASCADE)
+    @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "userId", onDelete = CASCADE)
     private String userId;
 
     @PrimaryKey
     @NonNull
     private String id;
+
+    //todo: hace falta una atributo nombre y el id sería autogenerado?
 
     @ColumnInfo(name="titulo")
     private String titulo;
@@ -26,7 +28,7 @@ public class Posts implements Serializable {
     @ColumnInfo(name="cuerpo")
     private String cuerpo;
 
-    public Posts(String userId, String id, String titulo, String cuerpo){
+    public Post(String userId, String id, String titulo, String cuerpo){
         this.userId = userId;
         this.id = id;
         this.titulo = titulo;

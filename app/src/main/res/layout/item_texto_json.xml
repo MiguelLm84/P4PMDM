@@ -24,25 +24,12 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tv_titulo_Item"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_titulo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:fontFamily="@font/cantora_one"
-                android:text="@string/tv_titulo"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_titulo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/cantora_one"
                 android:hint="@string/tv_titulo_json"
@@ -50,7 +37,8 @@
                 android:textColorHint="@color/white"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toTopOf="@+id/tv_autor"
-                app:layout_constraintStart_toEndOf="@+id/tv_titulo_Item"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -58,32 +46,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/cantora_one"
                 android:text="@string/tv_autor"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_titulo_Item" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/tv_autor"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:fontFamily="@font/cantora_one"
                 android:hint="@string/tv_autor_json"
-                android:textColor="#FFFFFF"
+                android:textColor="#D3D1D1"
                 android:textColorHint="@color/white"
-                android:textSize="17sp"
+                android:textSize="14sp"
+                android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_tautor_Item"
-                app:layout_constraintTop_toBottomOf="@+id/tv_titulo_Item" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_tautor_Item" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

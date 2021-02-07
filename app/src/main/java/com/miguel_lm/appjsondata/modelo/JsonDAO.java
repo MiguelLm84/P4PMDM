@@ -13,44 +13,38 @@ import java.util.List;
 public interface JsonDAO {
 
 
-    //////////////////////////////////
-    // USUARIOS
-    //////////////////////////////////
+    //POSTS
 
-    @Query("SELECT * FROM Posts")
-    List<Posts> getPosts();
+    @Query("SELECT * FROM Post")
+    List<Post> getPosts();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Posts posts);
+    void insert(Post posts);
 
     @Delete
-    void delete(Posts posts);
+    void delete(Post posts);
 
     @Update
-    void update(Posts posts);
+    void update(Post posts);
 
-    @Query("SELECT * FROM Posts WHERE titulo LIKE "%:query%")
-    public List<Posts> searchPosts(String query);
-
-
+    @Query("SELECT * FROM Post WHERE titulo LIKE :query") //%:query%
+    List<Post> searchPosts(String query);
 
 
-        //////////////////////////////////
-    // USUARIOS
-    //////////////////////////////////
+    //USUARIOS
 
-    @Query("SELECT * FROM Users")
-    List<Users> getUsers();
+    @Query("SELECT * FROM User")
+    List<User> getUsers();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Users users);
+    void insert(User user);
 
     @Delete
-    void delete(Users users);
+    void delete(User user);
 
     @Update
-    void update(Users users);
+    void update(User user);
 
-    @Query("SELECT * FROM Users WHERE id == :ide")
-    Users searchUserById(String ide);
+    @Query("SELECT * FROM User WHERE id == :ide")
+    User searchUserById(String ide);
 }

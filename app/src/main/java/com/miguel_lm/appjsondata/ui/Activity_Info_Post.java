@@ -24,7 +24,7 @@ public class Activity_Info_Post extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.json);
+        getSupportActionBar().setIcon(R.drawable.code_json_icon_136758);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
         tv_titulo = findViewById(R.id.tv_tituloPost);

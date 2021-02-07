@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
-import com.miguel_lm.appjsondata.modelo.Posts;
+import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.ui.ListenerPost;
 import com.miguel_lm.appjsondata.ui.adaptador.AdapterPosts;
 
@@ -20,7 +20,6 @@ import java.util.List;
 public class Fragment_List extends Fragment implements ListenerPost {
 
     RecyclerView recyclerViewPosts;
-
     AdapterPosts adapterPosts;
 
     @Override
@@ -29,7 +28,7 @@ public class Fragment_List extends Fragment implements ListenerPost {
         View vista = inflater.inflate(R.layout.fragment__list, container, false);
 
         JsonLab jsonLab = JsonLab.get(getContext());
-        List<Posts> listPosts = jsonLab.getPosts();
+        List<Post> listPosts = jsonLab.getPosts();
 
         recyclerViewPosts = vista.findViewById(R.id.RecyclerViewJson);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -39,27 +38,22 @@ public class Fragment_List extends Fragment implements ListenerPost {
         return vista;
     }
 
-    public void setListaPosts(List<Posts> listaPosts) {
+    public void setListaPosts(List<Post> listaPosts) {
         adapterPosts.actualizarListado(listaPosts);
     }
 
     @Override
-    public void infoAutor(Posts post) {
+    public void seleccionarPost(Post post) {
 
     }
 
     @Override
-    public void anhadirPosts(Posts post) {
+    public void modificarPosts(Post post) {
 
     }
 
     @Override
-    public void modificarPosts(Posts post) {
-
-    }
-
-    @Override
-    public void eliminarPosts(Posts post) {
+    public void eliminarPosts(Post post) {
 
     }
 }

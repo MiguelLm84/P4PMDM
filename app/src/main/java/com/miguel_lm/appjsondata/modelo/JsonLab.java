@@ -27,52 +27,48 @@ public class JsonLab {
         return jsonLab;
     }
 
-    //////////////////////////////////
-    // USUARIOS
-    //////////////////////////////////
+    //POSTS
 
-    public List<Posts> getPosts() {
+    public List<Post> getPosts() {
         return jsonDao.getPosts();
     }
 
-    public void insertPosts(Posts posts) {
+    public void insertPosts(Post posts) {
         jsonDao.insert(posts);
     }
 
-    public void updatePosts(Posts posts) {
+    public void updatePosts(Post posts) {
         jsonDao.update(posts);
     }
 
-    public void deletePosts(Posts posts) {
+    public void deletePosts(Post posts) {
         jsonDao.delete(posts);
     }
 
-    public List<Posts> searchPosts(String query) {
+    public List<Post> searchPosts(String query) {
         return jsonDao.searchPosts(query);
     }
 
 
-    //////////////////////////////////
     // USUARIOS
-    //////////////////////////////////
 
-    public List<Users> getUsers() {
+    public List<User> getUsers() {
         return jsonDao.getUsers();
     }
 
-    public void insertUsers(Users users) {
-        jsonDao.insert(users);
+    public void insertUsers(User user) {
+        jsonDao.insert(user);
     }
 
-    public void updateUsers(Users users) {
-        jsonDao.update(users);
+    public void updateUsers(User user) {
+        jsonDao.update(user);
     }
 
-    public void deleteUsers(Users users) {
-        jsonDao.delete(users);
+    public void deleteUsers(User user) {
+        jsonDao.delete(user);
     }
 
-    public Users searchUserById(String id) {
+    public User searchUserById(String id) {
         return jsonDao.searchUserById(id);
     }
 }
