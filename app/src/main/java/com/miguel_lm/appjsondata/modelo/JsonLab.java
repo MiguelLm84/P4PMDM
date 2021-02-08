@@ -68,7 +68,7 @@ public class JsonLab {
         jsonDao.delete(user);
     }
 
-    public User searchUserById(String id) {
+    public User searchUserById(int id) {
         return jsonDao.searchUserById(id);
     }
 }

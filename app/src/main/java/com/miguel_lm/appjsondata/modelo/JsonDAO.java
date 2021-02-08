@@ -46,5 +46,5 @@ public interface JsonDAO {
     void update(User user);
 
     @Query("SELECT * FROM User WHERE id == :ide")
-    User searchUserById(String ide);
+    User searchUserById(int ide);
 }

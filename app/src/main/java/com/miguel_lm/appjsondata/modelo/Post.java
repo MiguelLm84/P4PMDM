@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
@@ -14,11 +15,11 @@ import static androidx.room.ForeignKey.CASCADE;
 public class Post implements Serializable {
 
     @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "userId", onDelete = CASCADE)
-    private String userId;
+    private int userId;
 
-    @PrimaryKey
+    @PrimaryKey (autoGenerate = true)
     @NonNull
-    private String id;
+    private int id;
 
     //todo: hace falta una atributo nombre y el id sería autogenerado?
 
@@ -28,26 +29,35 @@ public class Post implements Serializable {
     @ColumnInfo(name="cuerpo")
     private String cuerpo;
 
-    public Post(String userId, String id, String titulo, String cuerpo){
+    /** Constructor para un post descargado del servidor */
+    public Post(int userId, int id, String titulo, String cuerpo){
         this.userId = userId;
         this.id = id;
         this.titulo = titulo;
         this.cuerpo = cuerpo;
     }
 
-    public String getUserId() {
+    /** Constructor para un nuevo post, no hace falta pasar el id */
+    @Ignore
+    public Post(int userId,  String titulo, String cuerpo){
+        this.userId = userId;
+        this.titulo = titulo;
+        this.cuerpo = cuerpo;
+    }
+
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public String getId() {
+    public int  getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int  id) {
         this.id = id;
     }
 
@@ -64,6 +74,12 @@ public class Post implements Serializable {
     }
 
     public void setCuerpo(String cuerpo) {
+        this.cuerpo = cuerpo;
+    }
+
+    public void modificar(int userId,  String titulo, String cuerpo){
+        this.userId = userId;
+        this.titulo = titulo;
         this.cuerpo = cuerpo;
     }
 }

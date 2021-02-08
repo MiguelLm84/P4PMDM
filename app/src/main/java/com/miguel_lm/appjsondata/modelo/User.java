@@ -12,7 +12,7 @@ public class User implements Serializable {
 
     @PrimaryKey
     @NonNull
-    private String id;
+    private int id;
 
     @ColumnInfo(name="name")
     private String name;
@@ -30,11 +30,11 @@ public class User implements Serializable {
     private String company;
 
     @NonNull
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public User(String id, String name, String nickname, String email, String phone, String company) {
+    public User(int id, String name, String nickname, String email, String phone, String company) {
         this.id = id;
         this.name = name;
         this.nickname = nickname;
@@ -43,7 +43,7 @@ public class User implements Serializable {
         this.company = company;
     }
 
-    public void setId(@NonNull String id) {
+    public void setId(@NonNull int id) {
         this.id = id;
     }
 

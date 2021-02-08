@@ -16,8 +16,7 @@ import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
-import com.miguel_lm.appjsondata.ui.Activity_Info_Detalle;
-import com.miguel_lm.appjsondata.ui.Activity_Info_Post;
+import com.miguel_lm.appjsondata.ui.Activity_Add_Post;
 import com.miguel_lm.appjsondata.ui.ListenerPost;
 
 public class ViewHolderPost extends RecyclerView.ViewHolder {
@@ -44,16 +43,23 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
         User autor = jsonLab.searchUserById(post.getUserId());
 
         tv_titulo.setText(post.getTitulo());
-        tv_autor.setText(autor.getName());
+        if (autor != null)
+            tv_autor.setText(autor.getName());
+        else
+            tv_autor.setText("Autor desconocido");
 
-        listener_post.seleccionarPost(post);
+        //listener_post.seleccionarPost(post);
 
         cardViewJson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(context, Activity_Info_Post.class);
-                context.startActivity(intent);
+
+                Intent intentNuevaTarea = new Intent(context, Activity_Add_Post.class);
+                intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_POST_EDITAR, post);
+                intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_MODO, Activity_Add_Post.ActivityPostModo.visualizar.ordinal());
+                context.startActivity(intentNuevaTarea);
+
             }
         });
 
@@ -69,12 +75,14 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
 
                         switch (item.getItemId()) {
                             case R.id.accionVerInfoAutor:
-                                Intent intent = new Intent(context, Activity_Info_Detalle.class);
-                                context.startActivity(intent);
+
+                                listener_post.seleccionarUser(autor);
                                 break;
+
                             case R.id.accionModificarPost:
                                 listener_post.modificarPosts(post);
                                 break;
+
                             case R.id.accionEliminarPost:
                                 listener_post.eliminarPosts(post);
                                 break;

@@ -8,13 +8,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +31,6 @@ import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
-import com.miguel_lm.appjsondata.ui.adaptador.AdapterPosts;
 import com.miguel_lm.appjsondata.ui.fragments.Fragment_List;
 
 import org.json.JSONArray;
@@ -66,12 +62,12 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         queue = Volley.newRequestQueue(this);
         conectividad();
 
-        recuperacionDeDatosUser();
-        recuperacionDeDatosPost();
-
+        // Crear el fragment
         fragLista = new Fragment_List();
         getSupportFragmentManager().beginTransaction().add(R.id.ContenedorFragments, fragLista).commit();
 
+        // Tras leer los usuarios, se descargarán los posts
+        recuperacionDeDatosUser();
 
         handleIntent(getIntent());
     }
@@ -87,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
             JsonLab jsonLab = JsonLab.get(MainActivity.this);
             List<Post> listadoPostsEncontrados = jsonLab.searchPosts(query);
 
-            fragLista.setListaPosts(listadoPostsEncontrados);
+       //    fragLista.setListaPosts(listadoPostsEncontrados);
         }
     }
 
@@ -108,10 +104,11 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_NUEVO_POST && resultCode == RESULT_OK) {
-            //actualizarListado();
+            fragLista.mostrarTodosPosts();
         }
     }
 
+    /** Tras descargar los usuarios se descargan los posts */
     private void recuperacionDeDatosUser() {
 
         String url_users = "https://jsonplaceholder.typicode.com/users?_end=5";
@@ -127,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
                         e.printStackTrace();
                     }
                 }
+
+                recuperacionDeDatosPost();
+
             }
 
         }, new Response.ErrorListener() {
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         queue.add(requestUser);
     }
 
+    /** Tras descargar posts, se actualiza listado */
     private void recuperacionDeDatosPost() {
 
         String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
                         e.printStackTrace();
                     }
                 }
+
+                // Mostrar listado
+                fragLista.mostrarTodosPosts();
             }
 
         }, new Response.ErrorListener() {
@@ -200,15 +204,16 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
     public void buttonFabAdd(View view) {
 
-        Intent intentNuevaTarea = new Intent(this, Activity_Add_Post.class);
-        startActivityForResult(intentNuevaTarea, REQUEST_NUEVO_POST);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        crearOmodificarPosts(null, Activity_Add_Post.ActivityPostModo.crear);
+
     }
 
-    private void crearOmodificarPosts(final Post postAmodificar) {
+    /** Centraliza todas las llamadas a la ficha de post, y se le debe indicar el modo */
+    private void crearOmodificarPosts(final Post postAmodificar, Activity_Add_Post.ActivityPostModo modo) {
 
         Intent intentNuevaTarea = new Intent(this, Activity_Add_Post.class);
         intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_POST_EDITAR, postAmodificar);
+        intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_MODO, modo.ordinal());
         startActivityForResult(intentNuevaTarea, REQUEST_NUEVO_POST);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
         AlertDialog.Builder builderDialogEscogerTareas = new AlertDialog.Builder(this);
         builderDialogEscogerTareas.setIcon(R.drawable.editar);
-        builderDialogEscogerTareas.setTitle("Modificar Tarea");
+        builderDialogEscogerTareas.setTitle("Modificar elementos");
 
         final String[] arrayTareasAMostrar = new String[listaPosts.size()];
         for (int i = 0; i < listaPosts.size(); i++) {
@@ -231,9 +236,9 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         builderDialogEscogerTareas.setPositiveButton("Modificar", (dialog, i) -> {
 
             if (postAmodificar == null) {
-                Toast.makeText(getApplicationContext(), "Debe escoger un post", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Debe escoger un elemento", Toast.LENGTH_SHORT).show();
             } else {
-                crearOmodificarPosts(postAmodificar);
+                crearOmodificarPosts(postAmodificar, Activity_Add_Post.ActivityPostModo.editar);
             }
         });
         builderDialogEscogerTareas.setNegativeButton("Cancelar", null);
@@ -290,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
                     }
                 }
                 fragLista.setListaPosts(listaPosts);
-                Toast.makeText(getApplicationContext(), "Tareas eliminadas correctamente.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Elementos eliminados correctamente.", Toast.LENGTH_SHORT).show();
             });
             builderEliminar_Confirmar.create().show();
             dialog.dismiss();
@@ -308,22 +313,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String texto) {
-                List<Post> lista = null;
-                AdapterPosts adapterPosts = new AdapterPosts(MainActivity.this, lista, MainActivity.this);
-                adapterPosts.getFilter().filter(texto);
-
-                return false;
-            }
-        });
 
         return true;
     }
@@ -337,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
             accionEscogerYModificar();
         } else if (item.getItemId() == R.id.accionEliminarPost) {
             eliminarDatosPosts();
+        } else if (item.getItemId() == R.id.accionRefrescar) {
+            botonReset();
         }
 
         return super.onOptionsItemSelected(item);
@@ -360,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         JsonLab jsonLab = JsonLab.get(MainActivity.this);
 
         try {
-            String id = response.getString("id");
+            int id = response.getInt("id");
             String nom = response.getString("name");
             String username = response.getString("username");
             String email = response.getString("email");
@@ -370,7 +361,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
             String company = jsonObj.getString("name");
 
             User user = new User(id, nom, username, email, phone, company);
-
             jsonLab.insertUsers(user);
 
         } catch (JSONException e) {
@@ -382,8 +372,8 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         JsonLab jsonLab = JsonLab.get(MainActivity.this);
 
         try {
-            String userId = response.getString("userId");
-            String id = response.getString("id");
+            int userId = response.getInt("userId");
+            int id = response.getInt("id");
             String titulo = response.getString("title");
             String cuerpo = response.getString("body");
 
@@ -396,67 +386,31 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     }
 
     @Override
-    public void seleccionarPost(Post post) {
+    public void seleccionarUser(User user) {
 
+        Intent intent = new Intent(this, Activity_Info_Autor.class);
+        intent.putExtra(Activity_Info_Autor.PARAM_USER, user);
+        startActivity(intent);
     }
 
     @Override
     public void modificarPosts(Post post) {
 
-        crearOmodificarPosts(post);
+        crearOmodificarPosts(post, Activity_Add_Post.ActivityPostModo.editar);
+
     }
 
     @Override
     public void eliminarPosts(Post post) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        final View dialogLayout = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity__add__post, null);
-        builder.setView(dialogLayout);
-        final AlertDialog dialog = builder.create();
+        crearOmodificarPosts(post, Activity_Add_Post.ActivityPostModo.eliminar);
 
-        JsonLab jsonLab = JsonLab.get(MainActivity.this);
-        User autor = jsonLab.searchUserById(post.getUserId());
-
-        final EditText ed_autor = dialogLayout.findViewById(R.id.ed_nombre_autor);
-        final EditText ed_titulo = dialogLayout.findViewById(R.id.ed_tituloPost);
-        final EditText ed_cuerpo = dialogLayout.findViewById(R.id.ed_cuerpoPost);
-        final Button btnAceptar = dialogLayout.findViewById(R.id.btn_aceptar);
-        final Button btnCancelar = dialogLayout.findViewById(R.id.btn_cancelar);
-
-        ed_autor.setText(autor.getName());
-        ed_titulo.setText(String.valueOf(post.getTitulo()));
-        ed_cuerpo.setText(String.valueOf(post.getCuerpo()));
-
-
-        btnAceptar.setOnClickListener(new View.OnClickListener() {
-
-            List<Post> listaPosts = jsonLab.getPosts();
-
-            @Override
-            public void onClick(View v) {
-                jsonLab.deletePosts(post);
-                listaPosts.remove(post);
-
-                //adapterPosts.actualizarListado();
-                //MainActivity.this.adapterPosts.notifyDataSetChanged();
-                Toast.makeText(MainActivity.this, "Post eliminado", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-            }
-        });
-        btnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
     }
 
-    public void botonReset(View view) {
+    public void botonReset() {
 
         this.deleteDatabase("JsonData");
         conectividad();
-        recuperacionDeDatosUser();
-        recuperacionDeDatosPost();
+        recuperacionDeDatosUser(); // Tras descargar users, se descargarán los posts
     }
 }

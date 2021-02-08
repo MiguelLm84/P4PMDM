@@ -17,7 +17,7 @@ import com.miguel_lm.appjsondata.ui.ListenerPost;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterPosts extends RecyclerView.Adapter<ViewHolderPost> implements Filterable {
+public class AdapterPosts extends RecyclerView.Adapter<ViewHolderPost> {
 
     private final ListenerPost listenerJson;
     private List<Post> listaPosts;
@@ -51,41 +51,4 @@ public class AdapterPosts extends RecyclerView.Adapter<ViewHolderPost> implement
     public int getItemCount() {
         return listaPosts.size();
     }
-
-
-    @Override
-    public Filter getFilter() {
-        return listaPostsFiltrada;
-    }
-
-    private final Filter listaPostsFiltrada = new Filter() {
-
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-
-            List<Post> listaFiltradaDePosts = new ArrayList<>();
-            if(charSequence == null || charSequence.length() == 0){
-                listaFiltradaDePosts.addAll(listaPosts);
-            } else {
-                String filterPatter = charSequence.toString().toLowerCase().trim();
-                for(Post post1 : listaPosts){
-                    if(post1.getTitulo().toLowerCase().contains(filterPatter)){
-                        listaFiltradaDePosts.add(post1);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = listaFiltradaDePosts;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            //listaPosts.clear();
-            listaPosts.addAll((List) results.values);
-            notifyDataSetChanged();
-        }
-    };
 }
