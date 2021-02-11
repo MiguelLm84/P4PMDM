@@ -8,7 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/_3377341_patr_n_geom_trico_textura_abstracta_para_fondos_de_pantalla_y_fondos_colores_blanco_y_dorado">
+        android:background="@drawable/fondorojo3">
 
         <TextView
             android:id="@+id/tv_tituloSplash"

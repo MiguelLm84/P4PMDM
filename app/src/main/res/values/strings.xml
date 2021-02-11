@@ -18,7 +18,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="tv_titulo_info_usuario">Info Usuario</string>
+    <string name="tv_titulo_info_usuario">Info User</string>
     <string name="tv_titulo_nombre_completo">Nombre</string>
     <string name="tv_nombre_completo">Nombre Completo</string>
     <string name="btn_aceptar">Aceptar</string>

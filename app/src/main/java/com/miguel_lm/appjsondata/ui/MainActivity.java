@@ -12,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
+
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
+import com.miguel_lm.appjsondata.ui.adaptador.AdapterPosts;
 import com.miguel_lm.appjsondata.ui.fragments.Fragment_List;
 
 import org.json.JSONArray;
@@ -46,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     private static final int REQUEST_NUEVO_POST = 1234;
     private Post postAmodificar;
     public static final String LOG_TAG = "log_json";
-    TextView tv_json;
+    TextView tv_titulo, tv_cuerpo;
+    Spinner spinnerAutor;
     RequestQueue queue;
 
     private Fragment_List fragLista;
@@ -56,8 +60,12 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.code_json_icon_136758);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        //overridePendingTransition(R.anim.right_in, R.anim.right_out);
+
+        spinnerAutor = findViewById(R.id.spinnerAutor);
+        tv_titulo = findViewById(R.id.ed_tituloPost);
+        tv_cuerpo = findViewById(R.id.ed_cuerpoPost);
 
         queue = Volley.newRequestQueue(this);
         conectividad();
@@ -124,16 +132,13 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
                         e.printStackTrace();
                     }
                 }
-
                 recuperacionDeDatosPost();
-
             }
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(MainActivity.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -165,41 +170,10 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(MainActivity.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
-
             }
         });
 
         queue.add(requestPost);
-    }
-
-    private void enviarDatosPosts() {
-
-        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
-
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url_posts, null, new Response.Listener<JSONObject>() {
-
-            @Override
-            public void onResponse(JSONObject response) {
-
-                try {
-                    String nom = tv_json.getText().toString();
-                    response.put("nombre", nom);
-                    Toast.makeText(MainActivity.this, "El nombre '" + nom + "' ha sido añadido", Toast.LENGTH_SHORT).show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        queue.add(request);
     }
 
     public void buttonFabAdd(View view) {
@@ -215,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_POST_EDITAR, postAmodificar);
         intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_MODO, modo.ordinal());
         startActivityForResult(intentNuevaTarea, REQUEST_NUEVO_POST);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        overridePendingTransition(R.anim.right_in, R.anim.right_out);
     }
 
     private void accionEscogerYModificar() {
@@ -307,12 +281,33 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        /*MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_principal, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
+
+        getMenuInflater().inflate(R.menu.menu_principal, menu);
+        MenuItem item = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String texto) {
+                JsonLab jsonLab = JsonLab.get(MainActivity.this);
+                List<Post> listPosts = jsonLab.getPosts();
+                AdapterPosts adapterPosts = new AdapterPosts(MainActivity.this, listPosts, MainActivity.this);
+                adapterPosts.getFilter().filter(texto);
+
+                return false;
+            }
+        });
 
         return true;
     }
@@ -342,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
             Toast.makeText(this, "Presione de nuevo 'Atrás' si desea salir", Toast.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            overridePendingTransition(R.anim.left_in, R.anim.left_out);
         }
     }
 

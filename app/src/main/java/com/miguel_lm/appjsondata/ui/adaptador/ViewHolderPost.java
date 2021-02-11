@@ -48,8 +48,6 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
         else
             tv_autor.setText("Autor desconocido");
 
-        //listener_post.seleccionarPost(post);
-
         cardViewJson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +57,6 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
                 intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_POST_EDITAR, post);
                 intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_MODO, Activity_Add_Post.ActivityPostModo.visualizar.ordinal());
                 context.startActivity(intentNuevaTarea);
-
             }
         });
 

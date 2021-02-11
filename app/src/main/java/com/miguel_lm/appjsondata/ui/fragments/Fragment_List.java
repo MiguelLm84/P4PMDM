@@ -43,5 +43,4 @@ public class Fragment_List extends Fragment {
     public void setListaPosts(List<Post> listaPosts) {
         adapterPosts.actualizarListado(listaPosts);
     }
-
 }

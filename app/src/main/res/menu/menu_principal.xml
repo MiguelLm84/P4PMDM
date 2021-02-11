@@ -7,7 +7,7 @@
         android:id="@+id/search"
         android:icon="@drawable/search"
         android:title="@string/buscar"
-        app:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
         android:id="@+id/accionAnhadirPost"
@@ -23,7 +23,9 @@
 
     <item
         android:id="@+id/accionRefrescar"
-        android:icon="@drawable/rotation_lock"
+        android:icon="@drawable/refreshpagebutton_99726"
         android:title="@string/reset"
         app:showAsAction="always" />
 </menu>
+
+    <!--.widget.SearchView-->

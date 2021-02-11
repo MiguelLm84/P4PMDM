@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,7 +15,7 @@ public class Activity_Info_Autor extends AppCompatActivity {
 
     TextView tv_nombre, tv_nickname, tv_email, tv_telefono, tv_company;
     Button btn_aceptar;
-
+    private long tiempoParaSalir = 0;
     public static final String PARAM_USER = "param_user";
 
     @Override
@@ -22,8 +23,7 @@ public class Activity_Info_Autor extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__info__autor);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.code_json_icon_136758);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        overridePendingTransition(R.anim.right_in, R.anim.right_out);
 
         tv_nombre = findViewById(R.id.tv_nombre_completo);
         tv_nickname = findViewById(R.id.tv_nickname);
@@ -44,9 +44,21 @@ public class Activity_Info_Autor extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                overridePendingTransition(R.anim.left_in, R.anim.left_out);
             }
         });
     }
 
+    @Override
+    public void onBackPressed(){
+
+        long tiempo = System.currentTimeMillis();
+        if (tiempo - tiempoParaSalir > 3000) {
+            tiempoParaSalir = tiempo;
+            Toast.makeText(this, "Presione de nuevo 'Atrás' si desea salir", Toast.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.left_in, R.anim.left_out);
+        }
+    }
 }

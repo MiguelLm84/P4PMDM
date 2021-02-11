@@ -11,17 +11,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Activity_Add_Post extends AppCompatActivity {
 
-    private static final int REQUEST_EDITAR_POST = 1222;
     public static final String PARAM_POST_EDITAR = "param_post_editar";
     public static final String PARAM_MODO = "param_modo";
     private long tiempoParaSalir = 0;
@@ -30,9 +38,9 @@ public class Activity_Add_Post extends AppCompatActivity {
     private Post postEditar;
     private JsonLab jsonLab;
     private EditText editTextTituloPost, editTextCuerpoPost;
-    private TextView tv_tituloActivityPost;
-    private Button btn_aceptar, btn_cancelar;
-
+    TextView tv_tituloActivityPost;
+    Button btn_aceptar, btn_cancelar;
+    RequestQueue queue;
     List<User> autoresList;
 
     private Spinner spinnerAutor;
@@ -42,9 +50,9 @@ public class Activity_Add_Post extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__add__post);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.code_json_icon_136758);
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        overridePendingTransition(R.anim.right_in, R.anim.right_out);
 
+        queue = Volley.newRequestQueue(this);
         jsonLab = JsonLab.get(this);
 
         spinnerAutor = findViewById(R.id.spinnerAutor);
@@ -53,7 +61,6 @@ public class Activity_Add_Post extends AppCompatActivity {
         tv_tituloActivityPost = findViewById(R.id.tv_title_anhadirPost);
         btn_aceptar = findViewById(R.id.btn_aceptarPost);
         btn_cancelar = findViewById(R.id.btn_cancelar);
-
 
         activityPostModo = ActivityPostModo.values()[getIntent().getIntExtra(PARAM_MODO, ActivityPostModo.crear.ordinal())];
         postEditar = (Post) getIntent().getSerializableExtra(PARAM_POST_EDITAR);
@@ -64,12 +71,10 @@ public class Activity_Add_Post extends AppCompatActivity {
         if (activityPostModo == ActivityPostModo.editar) {
             mostrarPost();
             tv_tituloActivityPost.setText("Modificar Post");
-            Toast.makeText(getApplicationContext(),"Modificar post existente.",Toast.LENGTH_SHORT).show();
             btn_aceptar.setText("Modificar");
         }
         else if (activityPostModo == ActivityPostModo.crear){
             tv_tituloActivityPost.setText("Nuevo Post");
-            Toast.makeText(getApplicationContext(),"Crear un nuevo post.",Toast.LENGTH_SHORT).show();
             btn_aceptar.setText("Añadir");
         }
         else if (activityPostModo == ActivityPostModo.eliminar) {
@@ -79,12 +84,11 @@ public class Activity_Add_Post extends AppCompatActivity {
         }
         else if (activityPostModo == ActivityPostModo.visualizar) {
             mostrarPost();
-            tv_tituloActivityPost.setText("Consultar Post");
+            tv_tituloActivityPost.setText("Info Post");
             btn_cancelar.setVisibility(View.GONE);
             btn_aceptar.setText("Aceptar");
         }
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
     }
 
     /** Configura un spinner para mostrar el listado de nombres de usuarios */
@@ -109,7 +113,6 @@ public class Activity_Add_Post extends AppCompatActivity {
             if (indiceAutor != -1)
                 spinnerAutor.setSelection(indiceAutor);
         }
-
     }
 
     private void mostrarPost() {
@@ -124,7 +127,7 @@ public class Activity_Add_Post extends AppCompatActivity {
     public void buttonCancelarClick(View view) {
         setResult(RESULT_CANCELED);
         finish();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
     }
 
     public void buttonOkClick(View view) {
@@ -152,10 +155,6 @@ public class Activity_Add_Post extends AppCompatActivity {
             Post nuevoPost = new Post(userId, titulo, cuerpo);
             jsonLab.insertPosts(nuevoPost);
 
-            Toast.makeText(getApplicationContext(),"Tarea añadida a la BD correctamente.",Toast.LENGTH_SHORT).show();
-
-            Toast.makeText(this, "Evento añadido.", Toast.LENGTH_SHORT).show();
-
             setResult(RESULT_OK);
 
         }
@@ -170,7 +169,7 @@ public class Activity_Add_Post extends AppCompatActivity {
         // MODO ELIMINAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.eliminar) {
             jsonLab.deletePosts(postEditar);
-            Toast.makeText(getApplicationContext(),"Post ELIMINADO.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),"Post eliminado correctamente",Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
 
         }
@@ -180,7 +179,107 @@ public class Activity_Add_Post extends AppCompatActivity {
         }
 
         finish();
-        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+    }
+
+    private void enviarDatosPosts() {
+
+        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url_posts, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    int autor = (int) spinnerAutor.getSelectedItemId();
+                    String titulo = editTextTituloPost.getText().toString();
+                    String cuerpo = editTextCuerpoPost.getText().toString();
+
+                    response.put("userId", autor);
+                    response.put("title", titulo);
+                    response.put("body", cuerpo);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(request);
+    }
+
+    private void modificarDatosPosts() {
+
+        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PATCH, url_posts, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    int autor = (int) spinnerAutor.getSelectedItemId();
+                    String titulo = editTextTituloPost.getText().toString();
+                    String cuerpo = editTextCuerpoPost.getText().toString();
+
+                    response.put("userId", autor);
+                    response.put("title", titulo);
+                    response.put("body", cuerpo);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(request);
+    }
+
+    private void eliminarDatosPosts() {
+
+        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url_posts, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+                    int autor = (int) spinnerAutor.getSelectedItemId();
+                    String titulo = editTextTituloPost.getText().toString();
+                    String cuerpo = editTextCuerpoPost.getText().toString();
+
+                    response.put("userId", autor);
+                    response.put("title", titulo);
+                    response.put("body", cuerpo);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(request);
     }
 
     @Override
@@ -192,7 +291,7 @@ public class Activity_Add_Post extends AppCompatActivity {
             Toast.makeText(this, "Presione de nuevo 'Atrás' si desea salir", Toast.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
-            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            overridePendingTransition(R.anim.left_in, R.anim.left_out);
         }
     }
 }
