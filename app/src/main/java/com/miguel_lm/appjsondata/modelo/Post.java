@@ -7,6 +7,11 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.miguel_lm.appjsondata.ui.MainActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 import static androidx.room.ForeignKey.CASCADE;
@@ -81,5 +86,41 @@ public class Post implements Serializable {
         this.userId = userId;
         this.titulo = titulo;
         this.cuerpo = cuerpo;
+    }
+
+    //////////////////////////////////////////
+    // CONVERSIÓN A Y DESDE JSON
+    //////////////////////////////////////////
+
+    public JSONObject generarJson() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("userId", String.valueOf(userId));
+            json.put("title", String.valueOf(titulo));
+            json.put("body", String.valueOf(cuerpo));
+        } catch (
+                JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
+    /** Genera un nuevo post con el json indicado */
+    public static Post parsearPost(JSONObject response) {
+
+        try {
+            int userId = response.getInt("userId");
+            int id = response.getInt("id");
+            String titulo = response.getString("title");
+            String cuerpo = response.getString("body");
+
+            return new Post(userId, id, titulo, cuerpo);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

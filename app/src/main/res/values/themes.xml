@@ -35,4 +35,6 @@
     </style>
 
     <style name="AppTheme" parent="Theme.AppTheme">AppTheme_splash</style>
+
+
 </resources>

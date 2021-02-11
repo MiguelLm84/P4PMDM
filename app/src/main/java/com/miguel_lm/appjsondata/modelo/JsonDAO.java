@@ -27,7 +27,7 @@ public interface JsonDAO {
     @Update
     void update(Post posts);
 
-    @Query("SELECT * FROM Post WHERE titulo LIKE :query") //%:query%
+    @Query("SELECT * FROM Post WHERE titulo LIKE '%' || :query || '%'") //%:query%
     List<Post> searchPosts(String query);
 
 

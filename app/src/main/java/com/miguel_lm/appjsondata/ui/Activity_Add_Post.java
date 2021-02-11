@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,6 @@ import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -33,7 +33,9 @@ public class Activity_Add_Post extends AppCompatActivity {
     public static final String PARAM_POST_EDITAR = "param_post_editar";
     public static final String PARAM_MODO = "param_modo";
     private long tiempoParaSalir = 0;
-    public enum ActivityPostModo { crear, editar, eliminar, visualizar}
+
+    public enum ActivityPostModo {crear, editar, eliminar, visualizar}
+
     private ActivityPostModo activityPostModo;
     private Post postEditar;
     private JsonLab jsonLab;
@@ -42,6 +44,8 @@ public class Activity_Add_Post extends AppCompatActivity {
     Button btn_aceptar, btn_cancelar;
     RequestQueue queue;
     List<User> autoresList;
+
+    private ProgressBar progressBar;
 
     private Spinner spinnerAutor;
 
@@ -61,6 +65,9 @@ public class Activity_Add_Post extends AppCompatActivity {
         tv_tituloActivityPost = findViewById(R.id.tv_title_anhadirPost);
         btn_aceptar = findViewById(R.id.btn_aceptarPost);
         btn_cancelar = findViewById(R.id.btn_cancelar);
+        progressBar = findViewById(R.id.progressBar);
+
+        progressBar.setVisibility(View.INVISIBLE);
 
         activityPostModo = ActivityPostModo.values()[getIntent().getIntExtra(PARAM_MODO, ActivityPostModo.crear.ordinal())];
         postEditar = (Post) getIntent().getSerializableExtra(PARAM_POST_EDITAR);
@@ -72,17 +79,14 @@ public class Activity_Add_Post extends AppCompatActivity {
             mostrarPost();
             tv_tituloActivityPost.setText("Modificar Post");
             btn_aceptar.setText("Modificar");
-        }
-        else if (activityPostModo == ActivityPostModo.crear){
+        } else if (activityPostModo == ActivityPostModo.crear) {
             tv_tituloActivityPost.setText("Nuevo Post");
             btn_aceptar.setText("Añadir");
-        }
-        else if (activityPostModo == ActivityPostModo.eliminar) {
+        } else if (activityPostModo == ActivityPostModo.eliminar) {
             mostrarPost();
             tv_tituloActivityPost.setText("Eliminar Post");
             btn_aceptar.setText("Eliminar");
-        }
-        else if (activityPostModo == ActivityPostModo.visualizar) {
+        } else if (activityPostModo == ActivityPostModo.visualizar) {
             mostrarPost();
             tv_tituloActivityPost.setText("Info Post");
             btn_cancelar.setVisibility(View.GONE);
@@ -91,14 +95,16 @@ public class Activity_Add_Post extends AppCompatActivity {
         overridePendingTransition(R.anim.left_in, R.anim.left_out);
     }
 
-    /** Configura un spinner para mostrar el listado de nombres de usuarios */
+    /**
+     * Configura un spinner para mostrar el listado de nombres de usuarios
+     */
     private void configurarSpinner() {
 
         autoresList = jsonLab.getUsers();
         List<String> nombresAutores = new ArrayList();
         for (User autor : autoresList)
             nombresAutores.add(autor.getName());
-        ArrayAdapter arrayAdapterAutores = new ArrayAdapter(this,android.R.layout.simple_spinner_item, nombresAutores);
+        ArrayAdapter arrayAdapterAutores = new ArrayAdapter(this, android.R.layout.simple_spinner_item, nombresAutores);
         spinnerAutor.setAdapter(arrayAdapterAutores);
 
         // Si se está en modo edición, o info, o eliminar, hay que mostrar el autor del post
@@ -106,7 +112,7 @@ public class Activity_Add_Post extends AppCompatActivity {
 
             // Hay que saber qué indice se corresponde con el id del autor
             int indiceAutor = -1;
-            for (int i=0 ; i<autoresList.size() ; i++)
+            for (int i = 0; i < autoresList.size(); i++)
                 if (autoresList.get(i).getId() == postEditar.getUserId())
                     indiceAutor = i;
 
@@ -121,7 +127,6 @@ public class Activity_Add_Post extends AppCompatActivity {
 
         editTextTituloPost.setText(postEditar.getTitulo());
         editTextCuerpoPost.setText(postEditar.getCuerpo());
-
     }
 
     public void buttonCancelarClick(View view) {
@@ -148,67 +153,65 @@ public class Activity_Add_Post extends AppCompatActivity {
         int indiceAutorSeleccionado = spinnerAutor.getSelectedItemPosition();
         int userId = autoresList.get(indiceAutorSeleccionado).getId();
 
-
         // MODO CREAR /////////////////////////////////////////////////////////////////
         if (activityPostModo == ActivityPostModo.crear) {
 
             Post nuevoPost = new Post(userId, titulo, cuerpo);
-            jsonLab.insertPosts(nuevoPost);
-
-            setResult(RESULT_OK);
-
+            enviarDatosPosts(nuevoPost);
         }
         // MODO EDITAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.editar) {
-            postEditar.modificar(userId, titulo, cuerpo);
-            jsonLab.updatePosts(postEditar);
-            Toast.makeText(getApplicationContext(),"Post modificado correctamente.",Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
 
+            postEditar.modificar(userId, titulo, cuerpo);
+            modificarDatosPosts(postEditar);
         }
         // MODO ELIMINAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.eliminar) {
-            jsonLab.deletePosts(postEditar);
-            Toast.makeText(getApplicationContext(),"Post eliminado correctamente",Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
 
+            eliminarDatosPosts(postEditar);
         }
         // MODO VISUALIZAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.visualizar) {
             // No hay que hacer nada en este caso
+            finish();
         }
-
-        finish();
-        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+        overridePendingTransition(R.anim.right_in, R.anim.right_out);
     }
 
-    private void enviarDatosPosts() {
+    /**
+     * Envia un articulo creado con los datos del formulario
+     * Tras responder el servidor, se guarda en la BD
+     * Y tras guardar en la BD se cierra la app
+     */
+    private void enviarDatosPosts(Post post) {
 
-        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+        String url_posts = "https://jsonplaceholder.typicode.com/posts";
 
+        progressBar.setVisibility(View.VISIBLE);
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url_posts, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url_posts, post.generarJson(), new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
 
-                try {
-                    int autor = (int) spinnerAutor.getSelectedItemId();
-                    String titulo = editTextTituloPost.getText().toString();
-                    String cuerpo = editTextCuerpoPost.getText().toString();
 
-                    response.put("userId", autor);
-                    response.put("title", titulo);
-                    response.put("body", cuerpo);
+                progressBar.setVisibility(View.INVISIBLE);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Post postDescargado = Post.parsearPost(response);
+
+                jsonLab.insertPosts(postDescargado);
+
+                setResult(RESULT_OK);
+                finish();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+
+                progressBar.setVisibility(View.INVISIBLE);
+
                 Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
             }
         });
@@ -216,32 +219,33 @@ public class Activity_Add_Post extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void modificarDatosPosts() {
+    private void modificarDatosPosts(Post post) {
 
-        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+        progressBar.setVisibility(View.VISIBLE);
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PATCH, url_posts, null, new Response.Listener<JSONObject>() {
+
+        String url_posts = "https://jsonplaceholder.typicode.com/posts/" + post.getId();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PATCH, url_posts, post.generarJson(), new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
 
-                try {
-                    int autor = (int) spinnerAutor.getSelectedItemId();
-                    String titulo = editTextTituloPost.getText().toString();
-                    String cuerpo = editTextCuerpoPost.getText().toString();
+                progressBar.setVisibility(View.INVISIBLE);
 
-                    response.put("userId", autor);
-                    response.put("title", titulo);
-                    response.put("body", cuerpo);
+                jsonLab.updatePosts(Post.parsearPost(response));
+                Toast.makeText(getApplicationContext(), "Post modificado correctamente.", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+
+                progressBar.setVisibility(View.INVISIBLE);
+
                 Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
             }
         });
@@ -249,32 +253,31 @@ public class Activity_Add_Post extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void eliminarDatosPosts() {
+    private void eliminarDatosPosts(Post post) {
 
-        String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
+        progressBar.setVisibility(View.VISIBLE);
+
+        String url_posts = "https://jsonplaceholder.typicode.com/posts/" + post.getId();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url_posts, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
 
-                try {
-                    int autor = (int) spinnerAutor.getSelectedItemId();
-                    String titulo = editTextTituloPost.getText().toString();
-                    String cuerpo = editTextCuerpoPost.getText().toString();
+                progressBar.setVisibility(View.INVISIBLE);
 
-                    response.put("userId", autor);
-                    response.put("title", titulo);
-                    response.put("body", cuerpo);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                jsonLab.deletePosts(postEditar);
+                Toast.makeText(getApplicationContext(), "Post eliminado correctamente", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                progressBar.setVisibility(View.INVISIBLE);
+
+
                 Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
             }
         });
@@ -283,12 +286,12 @@ public class Activity_Add_Post extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
         long tiempo = System.currentTimeMillis();
         if (tiempo - tiempoParaSalir > 3000) {
             tiempoParaSalir = tiempo;
-            Toast.makeText(this, "Presione de nuevo 'Atrás' si desea salir", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Presione de nuevo 'Atrás' para no perder los cambios", Toast.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
             overridePendingTransition(R.anim.left_in, R.anim.left_out);

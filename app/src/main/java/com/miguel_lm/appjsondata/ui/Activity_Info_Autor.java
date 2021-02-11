@@ -50,7 +50,7 @@ public class Activity_Info_Autor extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
         long tiempo = System.currentTimeMillis();
         if (tiempo - tiempoParaSalir > 3000) {

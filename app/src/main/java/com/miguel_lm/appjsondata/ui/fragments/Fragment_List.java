@@ -33,6 +33,7 @@ public class Fragment_List extends Fragment {
         return vista;
     }
 
+    /** Recoge todos los post de BD y los muestra en el adapter */
     public void mostrarTodosPosts() {
         JsonLab jsonLab = JsonLab.get(getContext());
         List<Post> listPosts = jsonLab.getPosts();

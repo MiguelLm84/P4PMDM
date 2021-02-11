@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     TextView tv_titulo, tv_cuerpo;
     Spinner spinnerAutor;
     RequestQueue queue;
-
     private Fragment_List fragLista;
 
     @Override
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         setContentView(R.layout.activity_main);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        //overridePendingTransition(R.anim.right_in, R.anim.right_out);
 
         spinnerAutor = findViewById(R.id.spinnerAutor);
         tv_titulo = findViewById(R.id.ed_tituloPost);
@@ -76,23 +74,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
         // Tras leer los usuarios, se descargarán los posts
         recuperacionDeDatosUser();
-
-        handleIntent(getIntent());
-    }
-
-        /**
-         * Evento que se dispara cuando se realiza una búsqueda en el actionbar
-         */
-    private void handleIntent(Intent intent) {
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-
-            JsonLab jsonLab = JsonLab.get(MainActivity.this);
-            List<Post> listadoPostsEncontrados = jsonLab.searchPosts(query);
-
-       //    fragLista.setListaPosts(listadoPostsEncontrados);
-        }
     }
 
     private void conectividad() {
@@ -179,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     public void buttonFabAdd(View view) {
 
         crearOmodificarPosts(null, Activity_Add_Post.ActivityPostModo.crear);
-
     }
 
     /** Centraliza todas las llamadas a la ficha de post, y se le debe indicar el modo */
@@ -281,12 +261,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_principal, menu);
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));*/
 
         getMenuInflater().inflate(R.menu.menu_principal, menu);
         MenuItem item = menu.findItem(R.id.search);
@@ -300,10 +274,10 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
             @Override
             public boolean onQueryTextChange(String texto) {
+
                 JsonLab jsonLab = JsonLab.get(MainActivity.this);
-                List<Post> listPosts = jsonLab.getPosts();
-                AdapterPosts adapterPosts = new AdapterPosts(MainActivity.this, listPosts, MainActivity.this);
-                adapterPosts.getFilter().filter(texto);
+                List<Post> listadoPostsEncontrados = jsonLab.searchPosts(texto);
+                fragLista.setListaPosts(listadoPostsEncontrados);
 
                 return false;
             }
@@ -364,20 +338,10 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     }
 
     private void parsearPost(JSONObject response) {
+
         JsonLab jsonLab = JsonLab.get(MainActivity.this);
-
-        try {
-            int userId = response.getInt("userId");
-            int id = response.getInt("id");
-            String titulo = response.getString("title");
-            String cuerpo = response.getString("body");
-
-            Post post = new Post(userId, id, titulo, cuerpo);
-            jsonLab.insertPosts(post);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Post postDescargado = Post.parsearPost(response);
+        jsonLab.insertPosts(postDescargado);
     }
 
     @Override
@@ -392,20 +356,18 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     public void modificarPosts(Post post) {
 
         crearOmodificarPosts(post, Activity_Add_Post.ActivityPostModo.editar);
-
     }
 
     @Override
     public void eliminarPosts(Post post) {
 
         crearOmodificarPosts(post, Activity_Add_Post.ActivityPostModo.eliminar);
-
     }
 
     public void botonReset() {
 
         this.deleteDatabase("JsonData");
         conectividad();
-        recuperacionDeDatosUser(); // Tras descargar users, se descargarán los posts
+        recuperacionDeDatosUser();
     }
 }
