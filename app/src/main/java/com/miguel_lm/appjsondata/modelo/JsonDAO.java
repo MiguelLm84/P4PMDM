@@ -27,8 +27,14 @@ public interface JsonDAO {
     @Update
     void update(Post posts);
 
-    @Query("SELECT * FROM Post WHERE titulo LIKE '%' || :query || '%'") //%:query%
+    @Query("SELECT * FROM Post WHERE titulo LIKE '%' || :query || '%'")
     List<Post> searchPosts(String query);
+
+    @Query("DELETE FROM Post")
+    void deleteAllPosts();
+
+    /*@Delete
+    public void deleteAll(Post post, User user);*/
 
 
     //USUARIOS
@@ -47,4 +53,7 @@ public interface JsonDAO {
 
     @Query("SELECT * FROM User WHERE id == :ide")
     User searchUserById(int ide);
+
+    @Query("DELETE FROM User")
+    void deleteAllUsers();
 }

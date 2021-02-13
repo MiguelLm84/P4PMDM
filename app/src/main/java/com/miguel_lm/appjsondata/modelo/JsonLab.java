@@ -49,6 +49,8 @@ public class JsonLab {
         return jsonDao.searchPosts(query);
     }
 
+    public void deleteAllPosts() { jsonDao.deleteAllPosts();    }
+
 
     // USUARIOS
 
@@ -71,4 +73,7 @@ public class JsonLab {
     public User searchUserById(int id) {
         return jsonDao.searchUserById(id);
     }
+
+    public void deleteAllUsers() { jsonDao.deleteAllUsers();   }
+
 }

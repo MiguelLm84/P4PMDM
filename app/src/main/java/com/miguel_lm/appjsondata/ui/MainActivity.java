@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.miguel_lm.appjsondata.R;
+import com.miguel_lm.appjsondata.modelo.DBManagerRoom;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
@@ -335,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
     private void parsearPost(JSONObject response) {
 
         JsonLab jsonLab = JsonLab.get(MainActivity.this);
-        Post postDescargado = Post.parsearPost(response);
+        Post postDescargado = Post.parsearPost(response, true);
         jsonLab.insertPosts(postDescargado);
     }
 
@@ -361,8 +362,16 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
     public void botonReset() {
 
-        this.deleteDatabase("JsonData");
+        //this.deleteDatabase("JsonData");
+        deleteDatabase();
         conectividad();
         recuperacionDeDatosUser();
+    }
+
+    public void deleteDatabase(){
+
+        JsonLab jsonLab = JsonLab.get(MainActivity.this);
+        jsonLab.deleteAllPosts();
+        jsonLab.deleteAllUsers();
     }
 }

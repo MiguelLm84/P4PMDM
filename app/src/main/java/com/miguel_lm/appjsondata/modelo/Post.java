@@ -107,15 +107,20 @@ public class Post implements Serializable {
     }
 
     /** Genera un nuevo post con el json indicado */
-    public static Post parsearPost(JSONObject response) {
+    public static Post parsearPost(JSONObject response, boolean mantenerIdDescargado) {
 
         try {
             int userId = response.getInt("userId");
-            int id = response.getInt("id");
+            int id = 0;
+            if (mantenerIdDescargado)
+                id = response.getInt("id");
             String titulo = response.getString("title");
             String cuerpo = response.getString("body");
 
-            return new Post(userId, id, titulo, cuerpo);
+            if (mantenerIdDescargado)
+                return new Post(userId, id, titulo, cuerpo);
+            else
+                return new Post(userId, titulo, cuerpo);
 
         } catch (JSONException e) {
             e.printStackTrace();

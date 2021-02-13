@@ -15,7 +15,6 @@ public class Activity_Info_Autor extends AppCompatActivity {
 
     TextView tv_nombre, tv_nickname, tv_email, tv_telefono, tv_company;
     Button btn_aceptar;
-    private long tiempoParaSalir = 0;
     public static final String PARAM_USER = "param_user";
 
     @Override
@@ -47,18 +46,5 @@ public class Activity_Info_Autor extends AppCompatActivity {
                 overridePendingTransition(R.anim.left_in, R.anim.left_out);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        long tiempo = System.currentTimeMillis();
-        if (tiempo - tiempoParaSalir > 3000) {
-            tiempoParaSalir = tiempo;
-            Toast.makeText(this, "Presione de nuevo 'Atrás' si desea salir", Toast.LENGTH_SHORT).show();
-        } else {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.left_in, R.anim.left_out);
-        }
     }
 }

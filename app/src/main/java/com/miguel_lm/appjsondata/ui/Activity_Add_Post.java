@@ -32,7 +32,6 @@ public class Activity_Add_Post extends AppCompatActivity {
 
     public static final String PARAM_POST_EDITAR = "param_post_editar";
     public static final String PARAM_MODO = "param_modo";
-    private long tiempoParaSalir = 0;
 
     public enum ActivityPostModo {crear, editar, eliminar, visualizar}
 
@@ -195,7 +194,7 @@ public class Activity_Add_Post extends AppCompatActivity {
 
                 progressBar.setVisibility(View.INVISIBLE);
 
-                Post postDescargado = Post.parsearPost(response);
+                Post postDescargado = Post.parsearPost(response, false);
 
                 jsonLab.insertPosts(postDescargado);
 
@@ -217,21 +216,26 @@ public class Activity_Add_Post extends AppCompatActivity {
         queue.add(request);
     }
 
-    private void modificarDatosPosts(Post post) {
+    private void modificarDatosPosts(Post postEditando) {
 
         progressBar.setVisibility(View.VISIBLE);
 
 
-        String url_posts = "https://jsonplaceholder.typicode.com/posts/" + post.getId();
+        String url_posts = "https://jsonplaceholder.typicode.com/posts/" + postEditando.getId();
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PATCH, url_posts, post.generarJson(), new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PATCH, url_posts, postEditando.generarJson(), new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
 
                 progressBar.setVisibility(View.INVISIBLE);
 
-                jsonLab.updatePosts(Post.parsearPost(response));
+                // Resulta que el servidor devuelve el mismo registro que se sube, pero sin id!
+                // Por eso se asigna el id del registro que se está modificando
+                Post postEditadoDescargado = Post.parsearPost(response, false);
+                postEditadoDescargado.setId(postEditando.getId());
+
+                jsonLab.updatePosts(postEditadoDescargado);
                 Toast.makeText(getApplicationContext(), "Post modificado correctamente.", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
@@ -281,18 +285,5 @@ public class Activity_Add_Post extends AppCompatActivity {
         });
 
         queue.add(request);
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        long tiempo = System.currentTimeMillis();
-        if (tiempo - tiempoParaSalir > 3000) {
-            tiempoParaSalir = tiempo;
-            Toast.makeText(this, "Presione de nuevo 'Atrás' para no perder los cambios", Toast.LENGTH_SHORT).show();
-        } else {
-            super.onBackPressed();
-            overridePendingTransition(R.anim.left_in, R.anim.left_out);
-        }
     }
 }
