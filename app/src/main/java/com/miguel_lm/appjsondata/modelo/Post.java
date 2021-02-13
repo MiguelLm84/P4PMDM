@@ -26,15 +26,12 @@ public class Post implements Serializable {
     @NonNull
     private int id;
 
-    //todo: hace falta una atributo nombre y el id sería autogenerado?
-
     @ColumnInfo(name="titulo")
     private String titulo;
 
     @ColumnInfo(name="cuerpo")
     private String cuerpo;
 
-    /** Constructor para un post descargado del servidor */
     public Post(int userId, int id, String titulo, String cuerpo){
         this.userId = userId;
         this.id = id;
@@ -42,7 +39,6 @@ public class Post implements Serializable {
         this.cuerpo = cuerpo;
     }
 
-    /** Constructor para un nuevo post, no hace falta pasar el id */
     @Ignore
     public Post(int userId,  String titulo, String cuerpo){
         this.userId = userId;
@@ -88,10 +84,6 @@ public class Post implements Serializable {
         this.cuerpo = cuerpo;
     }
 
-    //////////////////////////////////////////
-    // CONVERSIÓN A Y DESDE JSON
-    //////////////////////////////////////////
-
     public JSONObject generarJson() {
         JSONObject json = new JSONObject();
         try {
@@ -106,7 +98,6 @@ public class Post implements Serializable {
         return json;
     }
 
-    /** Genera un nuevo post con el json indicado */
     public static Post parsearPost(JSONObject response, boolean mantenerIdDescargado) {
 
         try {

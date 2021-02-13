@@ -32,9 +32,7 @@ public class Activity_Add_Post extends AppCompatActivity {
 
     public static final String PARAM_POST_EDITAR = "param_post_editar";
     public static final String PARAM_MODO = "param_modo";
-
     public enum ActivityPostModo {crear, editar, eliminar, visualizar}
-
     private ActivityPostModo activityPostModo;
     private Post postEditar;
     private JsonLab jsonLab;
@@ -51,7 +49,7 @@ public class Activity_Add_Post extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__add__post);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        overridePendingTransition(R.anim.right_in, R.anim.right_out);
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
 
         queue = Volley.newRequestQueue(this);
         jsonLab = JsonLab.get(this);
@@ -69,7 +67,6 @@ public class Activity_Add_Post extends AppCompatActivity {
         activityPostModo = ActivityPostModo.values()[getIntent().getIntExtra(PARAM_MODO, ActivityPostModo.crear.ordinal())];
         postEditar = (Post) getIntent().getSerializableExtra(PARAM_POST_EDITAR);
 
-        // Configurar spinner, mostrar el listado de autores
         configurarSpinner();
 
         if (activityPostModo == ActivityPostModo.editar) {
@@ -89,12 +86,9 @@ public class Activity_Add_Post extends AppCompatActivity {
             btn_cancelar.setVisibility(View.GONE);
             btn_aceptar.setText("Aceptar");
         }
-        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+        overridePendingTransition(R.anim.right_in, R.anim.right_out);
     }
 
-    /**
-     * Configura un spinner para mostrar el listado de nombres de usuarios
-     */
     private void configurarSpinner() {
 
         autoresList = jsonLab.getUsers();
@@ -104,10 +98,8 @@ public class Activity_Add_Post extends AppCompatActivity {
         ArrayAdapter arrayAdapterAutores = new ArrayAdapter(this, android.R.layout.simple_spinner_item, nombresAutores);
         spinnerAutor.setAdapter(arrayAdapterAutores);
 
-        // Si se está en modo edición, o info, o eliminar, hay que mostrar el autor del post
         if (activityPostModo != ActivityPostModo.crear) {
 
-            // Hay que saber qué indice se corresponde con el id del autor
             int indiceAutor = -1;
             for (int i = 0; i < autoresList.size(); i++)
                 if (autoresList.get(i).getId() == postEditar.getUserId())
@@ -146,40 +138,29 @@ public class Activity_Add_Post extends AppCompatActivity {
             return;
         }
 
-        // Coger el índice del autor seleccionado en el spinner
         int indiceAutorSeleccionado = spinnerAutor.getSelectedItemPosition();
         int userId = autoresList.get(indiceAutorSeleccionado).getId();
 
-        // MODO CREAR /////////////////////////////////////////////////////////////////
         if (activityPostModo == ActivityPostModo.crear) {
 
             Post nuevoPost = new Post(userId, titulo, cuerpo);
             enviarDatosPosts(nuevoPost);
         }
-        // MODO EDITAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.editar) {
 
             postEditar.modificar(userId, titulo, cuerpo);
             modificarDatosPosts(postEditar);
         }
-        // MODO ELIMINAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.eliminar) {
 
             eliminarDatosPosts(postEditar);
         }
-        // MODO VISUALIZAR /////////////////////////////////////////////////////////////////
         else if (activityPostModo == ActivityPostModo.visualizar) {
-            // No hay que hacer nada en este caso
             finish();
         }
-        overridePendingTransition(R.anim.right_in, R.anim.right_out);
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
     }
 
-    /**
-     * Envia un articulo creado con los datos del formulario
-     * Tras responder el servidor, se guarda en la BD
-     * Y tras guardar en la BD se cierra la app
-     */
     private void enviarDatosPosts(Post post) {
 
         String url_posts = "https://jsonplaceholder.typicode.com/posts";
@@ -230,8 +211,6 @@ public class Activity_Add_Post extends AppCompatActivity {
 
                 progressBar.setVisibility(View.INVISIBLE);
 
-                // Resulta que el servidor devuelve el mismo registro que se sube, pero sin id!
-                // Por eso se asigna el id del registro que se está modificando
                 Post postEditadoDescargado = Post.parsearPost(response, false);
                 postEditadoDescargado.setId(postEditando.getId());
 
@@ -278,7 +257,6 @@ public class Activity_Add_Post extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 progressBar.setVisibility(View.INVISIBLE);
-
 
                 Toast.makeText(Activity_Add_Post.this, "Error, no se ha podido conectar a la url solicitada", Toast.LENGTH_SHORT).show();
             }

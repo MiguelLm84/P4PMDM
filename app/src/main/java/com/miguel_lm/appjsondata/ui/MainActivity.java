@@ -26,7 +26,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.miguel_lm.appjsondata.R;
-import com.miguel_lm.appjsondata.modelo.DBManagerRoom;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
@@ -64,11 +63,9 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         queue = Volley.newRequestQueue(this);
         conectividad();
 
-        // Crear el fragment
         fragLista = new Fragment_List();
         getSupportFragmentManager().beginTransaction().add(R.id.ContenedorFragments, fragLista).commit();
 
-        // Tras leer los usuarios, se descargarán los posts
         recuperacionDeDatosUser();
     }
 
@@ -93,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         }
     }
 
-    /** Tras descargar los usuarios se descargan los posts */
     private void recuperacionDeDatosUser() {
 
         String url_users = "https://jsonplaceholder.typicode.com/users?_end=5";
@@ -122,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         queue.add(requestUser);
     }
 
-    /** Tras descargar posts, se actualiza listado */
     private void recuperacionDeDatosPost() {
 
         String url_posts = "https://jsonplaceholder.typicode.com/posts?_end=50";
@@ -138,8 +133,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
                         e.printStackTrace();
                     }
                 }
-
-                // Mostrar listado
                 fragLista.mostrarTodosPosts();
             }
 
@@ -158,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         crearOmodificarPosts(null, Activity_Add_Post.ActivityPostModo.crear);
     }
 
-    /** Centraliza todas las llamadas a la ficha de post, y se le debe indicar el modo */
     private void crearOmodificarPosts(final Post postAmodificar, Activity_Add_Post.ActivityPostModo modo) {
 
         Intent intentNuevaTarea = new Intent(this, Activity_Add_Post.class);
@@ -221,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
         builderEliminar.setPositiveButton("Borrar", (dialog, which) -> {
 
             AlertDialog.Builder builderEliminar_Confirmar = new AlertDialog.Builder(this);
-            builderEliminar_Confirmar.setIcon(R.drawable.correo_no_deseado);
+            builderEliminar_Confirmar.setIcon(R.drawable.eliminar__2_);
             builderEliminar_Confirmar.setTitle("¿Eliminar los elementos?");
             String postsPorBorrar = null;
 
@@ -362,7 +354,6 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
     public void botonReset() {
 
-        //this.deleteDatabase("JsonData");
         deleteDatabase();
         conectividad();
         recuperacionDeDatosUser();

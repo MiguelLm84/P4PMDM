@@ -33,8 +33,6 @@ public interface JsonDAO {
     @Query("DELETE FROM Post")
     void deleteAllPosts();
 
-    /*@Delete
-    public void deleteAll(Post post, User user);*/
 
 
     //USUARIOS

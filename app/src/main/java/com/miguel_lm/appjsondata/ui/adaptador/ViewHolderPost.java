@@ -52,7 +52,6 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
 
-
                 Intent intentNuevaTarea = new Intent(context, Activity_Add_Post.class);
                 intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_POST_EDITAR, post);
                 intentNuevaTarea.putExtra(Activity_Add_Post.PARAM_MODO, Activity_Add_Post.ActivityPostModo.visualizar.ordinal());
@@ -93,6 +92,5 @@ public class ViewHolderPost extends RecyclerView.ViewHolder {
                 return false;
             }
         });
-
     }
 }
