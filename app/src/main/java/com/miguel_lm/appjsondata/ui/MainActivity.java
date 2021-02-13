@@ -240,8 +240,8 @@ public class MainActivity extends AppCompatActivity implements ListenerPost {
 
                 for (int i = listaPosts.size() - 1; i >= 0; i--) {
                     if (postsSeleccionados[i]) {
-                        listaPosts.remove(i);
                         JsonLab.get(this).deletePosts(listaPosts.get(i));
+                        listaPosts.remove(i);
                     }
                 }
                 fragLista.setListaPosts(listaPosts);
