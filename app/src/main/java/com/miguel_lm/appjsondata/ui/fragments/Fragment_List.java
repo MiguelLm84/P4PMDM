@@ -17,6 +17,7 @@ import com.miguel_lm.appjsondata.ui.ListenerPost;
 import com.miguel_lm.appjsondata.ui.MainActivity;
 import com.miguel_lm.appjsondata.ui.adaptador.AdapterPosts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Fragment_List extends Fragment {

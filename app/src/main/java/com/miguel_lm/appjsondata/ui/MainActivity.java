@@ -1,7 +1,6 @@
 package com.miguel_lm.appjsondata.ui;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -9,11 +8,8 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import androidx.appcompat.widget.SearchView;
-
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,19 +17,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.miguel_lm.appjsondata.R;
 import com.miguel_lm.appjsondata.modelo.JsonLab;
 import com.miguel_lm.appjsondata.modelo.Post;
 import com.miguel_lm.appjsondata.modelo.User;
-import com.miguel_lm.appjsondata.ui.adaptador.AdapterPosts;
 import com.miguel_lm.appjsondata.ui.fragments.Fragment_List;
 
 import org.json.JSONArray;

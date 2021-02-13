@@ -44,9 +44,7 @@ public class Activity_Add_Post extends AppCompatActivity {
     Button btn_aceptar, btn_cancelar;
     RequestQueue queue;
     List<User> autoresList;
-
     private ProgressBar progressBar;
-
     private Spinner spinnerAutor;
 
     @Override
